@@ -6,9 +6,13 @@ class Trie
   end
 
   def add(word)
-    input = word.chars
+    input = word.downcase.chars
     letter = input.shift
-   @head[letter] = Node.new(letter, input) 
+    if head[letter]
+      @head[letter].pass(input)
+    else
+      @head[letter] = Node.new(letter, input)
+    end
   end
 
 end
@@ -21,12 +25,21 @@ class Node
     @links = {}
     @value = value
 
-    input = letters 
-    unless input.empty?
-    letter = input.shift
-      @links[letter] = Node.new(letter, input) 
+    unless letters.empty?
+      add_node(letters)
     end
+  end
 
+  def add_node(letters)
+    letter = letters.shift
+    @links[letter] = Node.new(letter, letters)
+  end
+
+  def pass(letters)
+    if links.keys.include?(letters.first)
+      links[letters[0]].pass(letters[1..-1])
+    else
+      add_node(letters)
+    end
   end
 end
-
