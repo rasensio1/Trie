@@ -64,8 +64,9 @@ class TrieTest < Minitest::Test
     trie.add("he")
     trie.add("hello")
 
-    assert trie.head["h"].links["e"].is_word?
-    refute trie.head["h"].links["e"].is_word?
+    assert trie.verify_word("he")
+    refute trie.verify_word("hel")
+    assert trie.verify_word("hello")
   end
 
 end
@@ -92,6 +93,13 @@ class NodeTest < Minitest::Test
 
     assert_equal ["e"], node.links.keys
     assert_equal ["y", "l"], node.links["e"].links.keys
+  end
+
+  def test_it_sets_as_word
+    node = Node.new("h", ["e", "l", "l", "o"])
+
+    refute node.is_word?
+    assert node.verify_word(["h", "e", "l", "l", "o"])
   end
 
 end

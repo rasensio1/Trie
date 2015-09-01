@@ -9,25 +9,40 @@ class Trie
     input = word.downcase.chars
     letter = input.shift
     if head[letter]
-      @head[letter].pass(input)
+      head[letter].pass(input)
     else
-      @head[letter] = Node.new(letter, input)
+      head[letter] = Node.new(letter, input)
     end
   end
 
+  def verify_word(word)
+    input = word.downcase.chars
+    if head[input.first]
+      head[input.first].verify_word(input)
+    else
+      false
+    end
+  end
 end
 
 class Node
 
-  attr_accessor :value, :links
+  attr_accessor :value, :links, :word
 
   def initialize(value, letters)
     @links = {}
     @value = value
+    @word = false
 
-    unless letters.empty?
+    if letters.empty?
+      @word = true
+    else
       add_node(letters)
     end
+  end
+
+  def is_word?
+    word
   end
 
   def add_node(letters)
@@ -42,4 +57,13 @@ class Node
       add_node(letters)
     end
   end
+
+  def verify_word(word_array)
+    flag = word
+    unless !links.keys.include?(word_array[1]) || word_array.count == 1
+      flag = links[word_array[1]].verify_word(word_array[1..-1])
+    end
+    flag
+  end
+
 end
